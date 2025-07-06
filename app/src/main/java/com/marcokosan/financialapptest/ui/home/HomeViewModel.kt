@@ -6,7 +6,8 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.marcokosan.financialapptest.R
-import com.marcokosan.financialapptest.data.repository.AccountInfoRepository
+import com.marcokosan.financialapptest.domain.account.GetAccountUseCase
+import com.marcokosan.financialapptest.domain.transaction.GetTransactionsUseCase
 import com.marcokosan.financialapptest.ui.home.mapper.toHomeTransactionItemUiModel
 import com.marcokosan.financialapptest.ui.home.model.HomeTransactionItemUiModel
 import com.marcokosan.financialapptest.ui.shared.ScreenEvent
@@ -33,31 +34,31 @@ sealed class HomeUiState {
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val accountInfoRepository: AccountInfoRepository,
+    private val geAccount: GetAccountUseCase,
+    getTransactions: GetTransactionsUseCase,
 ) : ViewModel() {
 
     // TODO: Get accountId through login flow.
     private val accountId: String = "42"
 
+    private val _event = Channel<ScreenEvent>()
+    val event = _event.receiveAsFlow()
+
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState
 
     val transactions: Flow<PagingData<HomeTransactionItemUiModel>> =
-        accountInfoRepository.getPagedTransactions(accountId)
+        getTransactions(accountId)
             .map { pagingData ->
                 pagingData.map { it.toHomeTransactionItemUiModel() }
             }
             .cachedIn(viewModelScope)
 
-
-    private val _event = Channel<ScreenEvent>()
-    val event = _event.receiveAsFlow()
-
     init {
-        refreshData()
+        refreshUi()
     }
 
-    fun refreshData() {
+    fun refreshUi() {
         _uiState.value.let { state ->
             if (state is HomeUiState.Success) {
                 _uiState.value = state.copy(isRefreshing = true)
@@ -67,7 +68,7 @@ class HomeViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            accountInfoRepository.getAccount(accountId).fold(
+            geAccount(accountId).fold(
                 onSuccess = { data ->
                     _uiState.value = HomeUiState.Success(
                         userName = data.holderName,
@@ -75,7 +76,9 @@ class HomeViewModel @Inject constructor(
                     )
                 },
                 onFailure = {
-                    if (_uiState.value is HomeUiState.Success) {
+                    val currentState = _uiState.value
+                    if (currentState is HomeUiState.Success) {
+                        _uiState.value = currentState.copy(isRefreshing = false)
                         _event.send(ScreenEvent.ShowSnackbar(R.string.error_message))
                     } else {
                         _uiState.value = HomeUiState.Error()

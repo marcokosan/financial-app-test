@@ -4,37 +4,23 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import com.marcokosan.financialapptest.data.local.dao.AccountDao
 import com.marcokosan.financialapptest.data.local.dao.TransactionDao
 import com.marcokosan.financialapptest.data.local.mapper.toDomain
-import com.marcokosan.financialapptest.model.Account
 import com.marcokosan.financialapptest.model.Transaction
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-interface AccountInfoRepository {
-    suspend fun getAccount(accountId: String): Result<Account>
+interface TransactionsRepository {
     fun getPagedTransactions(
         accountId: String,
-        pageSize: Int = 20,
-        enablePlaceholders: Boolean = false,
+        pageSize: Int,
+        enablePlaceholders: Boolean,
     ): Flow<PagingData<Transaction>>
 }
 
-class AccountInfoRepositoryImpl(
-    private val accountDao: AccountDao,
+class TransactionsRepositoryImpl(
     private val transactionDao: TransactionDao,
-) : AccountInfoRepository {
-
-    override suspend fun getAccount(accountId: String): Result<Account> {
-        // Simulate network delay.
-        delay(1000)
-
-        return accountDao.getById(accountId)
-            ?.let { Result.success(it.toDomain()) }
-            ?: Result.failure(Error("Account not found: id $accountId"))
-    }
+) : TransactionsRepository {
 
     override fun getPagedTransactions(
         accountId: String,

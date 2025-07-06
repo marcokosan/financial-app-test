@@ -116,7 +116,8 @@ fun HomeScreen(
                             } else {
                                 Icons.Default.DarkMode
                             },
-                            contentDescription = "Alternar modo do tema",
+                            contentDescription =
+                                stringResource(R.string.home_switch_theme_mode_description),
                         )
                     }
                 },
@@ -130,7 +131,10 @@ fun HomeScreen(
                     contentPadding = innerPadding,
                     transactions = transactions,
                     isRefreshing = state.isRefreshing,
-                    onRefresh = viewModel::refreshData,
+                    onRefresh = {
+                        viewModel.refreshUi()
+                        transactions.refresh()
+                    },
                     onTransactionClick = onTransactionClick,
                 )
             }
@@ -153,7 +157,8 @@ fun HomeScreen(
                         .padding(innerPadding),
                     message = state.message,
                     onTryAgain = {
-                        viewModel.refreshData()
+                        viewModel.refreshUi()
+                        transactions.refresh()
                     }
                 )
             }
@@ -168,7 +173,7 @@ private fun Balance(value: String, modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = "Saldo",
+            text = stringResource(R.string.balance),
             style = typography.headlineSmall,
             color = colorScheme.onPrimary,
             fontWeight = FontWeight.Bold,

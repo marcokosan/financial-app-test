@@ -5,5 +5,8 @@
 
     <string name="try_again">Tentar novamente</string>
     <string name="refresh">Recarregar</string>
+    <string name="balance">Saldo</string>
     <string name="error_message">Ocorreu um erro</string>
+
+    <string name="home_switch_theme_mode_description">Alternar modo do tema</string>
 </resources>
