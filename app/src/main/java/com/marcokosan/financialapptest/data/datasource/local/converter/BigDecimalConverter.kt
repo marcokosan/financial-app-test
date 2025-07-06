@@ -1,9 +1,9 @@
-package com.marcokosan.financialapptest.data.source.local
+package com.marcokosan.financialapptest.data.datasource.local.converter
 
 import androidx.room.TypeConverter
 import java.math.BigDecimal
 
-class Converters {
+class BigDecimalConverter {
 
     @TypeConverter
     fun fromBigDecimal(value: BigDecimal?): String? {

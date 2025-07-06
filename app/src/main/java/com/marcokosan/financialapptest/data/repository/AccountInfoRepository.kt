@@ -1,42 +1,54 @@
 package com.marcokosan.financialapptest.data.repository
 
-import com.marcokosan.financialapptest.data.model.AccountInfo
-import com.marcokosan.financialapptest.data.source.local.dao.AccountInfoDao
-import com.marcokosan.financialapptest.data.source.local.entity.AccountInfoEntity
-import com.marcokosan.financialapptest.data.source.local.mapper.toDomain
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.math.BigDecimal
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
+import com.marcokosan.financialapptest.data.datasource.local.dao.AccountDao
+import com.marcokosan.financialapptest.data.datasource.local.dao.TransactionDao
+import com.marcokosan.financialapptest.data.datasource.local.mapper.toDomain
+import com.marcokosan.financialapptest.data.model.Account
+import com.marcokosan.financialapptest.data.model.Transaction
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 interface AccountInfoRepository {
-    suspend fun getAccountInfo(accountId: String): Result<AccountInfo>
-    suspend fun getAccountStatement(accountId: String, page: Int? = null, size: Int? = null)
-
-    // FIXME: Remover.
-    suspend fun mockData()
+    suspend fun getAccount(accountId: String): Result<Account>
+    fun getPagedTransactions(
+        accountId: String,
+        pageSize: Int = 20,
+        enablePlaceholders: Boolean = false,
+    ): Flow<PagingData<Transaction>>
 }
 
 class AccountInfoRepositoryImpl(
-    private val accountInfoDao: AccountInfoDao,
+    private val accountDao: AccountDao,
+    private val transactionDao: TransactionDao,
 ) : AccountInfoRepository {
 
-    override suspend fun getAccountInfo(accountId: String): Result<AccountInfo> =
-        withContext(Dispatchers.IO) {
-            accountInfoDao.getAccountInfo(accountId)
-                ?.let { Result.success(it.toDomain()) }
-                ?: Result.failure(Error("AccountId not found"))
-        }
+    override suspend fun getAccount(accountId: String): Result<Account> {
+        // Simulate network delay.
+        delay(200)
 
-    override suspend fun getAccountStatement(accountId: String, page: Int?, size: Int?) {
+        return accountDao.getById(accountId)
+            ?.let { Result.success(it.toDomain()) }
+            ?: Result.failure(Error("Account not found: id $accountId"))
     }
 
-    override suspend fun mockData() {
-        accountInfoDao.save(
-            AccountInfoEntity(
-                accountId = "42",
-                holderName = "Marco",
-                balance = BigDecimal("1400050.42")
+    override fun getPagedTransactions(
+        accountId: String,
+        pageSize: Int,
+        enablePlaceholders: Boolean,
+    ): Flow<PagingData<Transaction>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = pageSize,
+                enablePlaceholders = enablePlaceholders
             ),
-        )
+            pagingSourceFactory = { transactionDao.getPagingSource(accountId) }
+        ).flow.map { pagingData ->
+            pagingData.map { it.toDomain() }
+        }
     }
 }
