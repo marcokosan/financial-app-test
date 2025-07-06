@@ -1,4 +1,4 @@
-package com.marcokosan.financialapptest.data.model
+package com.marcokosan.financialapptest.model
 
 import java.math.BigDecimal
 import java.sql.Timestamp
@@ -9,6 +9,4 @@ data class Transaction(
     val value: BigDecimal,
     val description: String,
     val timestamp: Timestamp,
-) {
-    val isIncome get() = value.signum() >= 0
-}
+)

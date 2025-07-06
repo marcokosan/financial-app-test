@@ -1,4 +1,4 @@
-package com.marcokosan.financialapptest.data.datasource.local.converter
+package com.marcokosan.financialapptest.data.local.converter
 
 import androidx.room.TypeConverter
 import java.math.BigDecimal

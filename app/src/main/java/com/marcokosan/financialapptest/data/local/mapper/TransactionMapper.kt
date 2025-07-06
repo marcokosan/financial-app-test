@@ -1,7 +1,7 @@
-package com.marcokosan.financialapptest.data.datasource.local.mapper
+package com.marcokosan.financialapptest.data.local.mapper
 
-import com.marcokosan.financialapptest.data.datasource.local.entity.TransactionEntity
-import com.marcokosan.financialapptest.data.model.Transaction
+import com.marcokosan.financialapptest.data.local.entity.TransactionEntity
+import com.marcokosan.financialapptest.model.Transaction
 
 fun TransactionEntity.toDomain() = Transaction(
     id = id,

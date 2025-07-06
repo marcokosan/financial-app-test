@@ -1,4 +1,4 @@
-package com.marcokosan.financialapptest.data.datasource.local.entity
+package com.marcokosan.financialapptest.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

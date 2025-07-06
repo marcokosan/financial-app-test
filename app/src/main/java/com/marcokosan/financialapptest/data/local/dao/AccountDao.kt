@@ -1,9 +1,9 @@
-package com.marcokosan.financialapptest.data.datasource.local.dao
+package com.marcokosan.financialapptest.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
-import com.marcokosan.financialapptest.data.datasource.local.entity.AccountEntity
+import com.marcokosan.financialapptest.data.local.entity.AccountEntity
 
 @Dao
 interface AccountDao {

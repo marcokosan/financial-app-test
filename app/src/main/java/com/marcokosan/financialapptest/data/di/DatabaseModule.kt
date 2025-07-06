@@ -1,13 +1,13 @@
-package com.marcokosan.financialapptest.data.datasource.local.di
+package com.marcokosan.financialapptest.data.di
 
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.marcokosan.financialapptest.data.datasource.local.AppDatabase
-import com.marcokosan.financialapptest.data.datasource.local.BootstrapData
-import com.marcokosan.financialapptest.data.datasource.local.dao.AccountDao
-import com.marcokosan.financialapptest.data.datasource.local.dao.TransactionDao
+import com.marcokosan.financialapptest.data.local.AppDatabase
+import com.marcokosan.financialapptest.data.local.BootstrapData
+import com.marcokosan.financialapptest.data.local.dao.AccountDao
+import com.marcokosan.financialapptest.data.local.dao.TransactionDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -1,4 +1,4 @@
-package com.marcokosan.financialapptest.data.model
+package com.marcokosan.financialapptest.model
 
 import java.math.BigDecimal
 

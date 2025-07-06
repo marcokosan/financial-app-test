@@ -1,7 +1,7 @@
-package com.marcokosan.financialapptest.data.datasource.local
+package com.marcokosan.financialapptest.data.local
 
-import com.marcokosan.financialapptest.data.datasource.local.entity.AccountEntity
-import com.marcokosan.financialapptest.data.datasource.local.entity.TransactionEntity
+import com.marcokosan.financialapptest.data.local.entity.AccountEntity
+import com.marcokosan.financialapptest.data.local.entity.TransactionEntity
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.sql.Timestamp

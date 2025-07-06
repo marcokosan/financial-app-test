@@ -4,11 +4,11 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import com.marcokosan.financialapptest.data.datasource.local.dao.AccountDao
-import com.marcokosan.financialapptest.data.datasource.local.dao.TransactionDao
-import com.marcokosan.financialapptest.data.datasource.local.mapper.toDomain
-import com.marcokosan.financialapptest.data.model.Account
-import com.marcokosan.financialapptest.data.model.Transaction
+import com.marcokosan.financialapptest.data.local.dao.AccountDao
+import com.marcokosan.financialapptest.data.local.dao.TransactionDao
+import com.marcokosan.financialapptest.data.local.mapper.toDomain
+import com.marcokosan.financialapptest.model.Account
+import com.marcokosan.financialapptest.model.Transaction
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -29,7 +29,7 @@ class AccountInfoRepositoryImpl(
 
     override suspend fun getAccount(accountId: String): Result<Account> {
         // Simulate network delay.
-        delay(200)
+        delay(1000)
 
         return accountDao.getById(accountId)
             ?.let { Result.success(it.toDomain()) }

@@ -1,11 +1,11 @@
-package com.marcokosan.financialapptest.data.datasource.local.dao
+package com.marcokosan.financialapptest.data.local.dao
 
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.marcokosan.financialapptest.data.datasource.local.entity.TransactionEntity
+import com.marcokosan.financialapptest.data.local.entity.TransactionEntity
 
 @Dao
 interface TransactionDao {

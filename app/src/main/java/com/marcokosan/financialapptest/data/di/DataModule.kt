@@ -1,7 +1,7 @@
-package com.marcokosan.financialapptest.data.repository.di
+package com.marcokosan.financialapptest.data.di
 
-import com.marcokosan.financialapptest.data.datasource.local.dao.AccountDao
-import com.marcokosan.financialapptest.data.datasource.local.dao.TransactionDao
+import com.marcokosan.financialapptest.data.local.dao.AccountDao
+import com.marcokosan.financialapptest.data.local.dao.TransactionDao
 import com.marcokosan.financialapptest.data.repository.AccountInfoRepository
 import com.marcokosan.financialapptest.data.repository.AccountInfoRepositoryImpl
 import dagger.Module
@@ -12,7 +12,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object RepositoryModule {
+object DataModule {
 
     @Provides
     @Singleton

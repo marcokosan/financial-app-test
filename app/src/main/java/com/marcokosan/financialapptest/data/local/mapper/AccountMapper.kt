@@ -1,7 +1,7 @@
-package com.marcokosan.financialapptest.data.datasource.local.mapper
+package com.marcokosan.financialapptest.data.local.mapper
 
-import com.marcokosan.financialapptest.data.datasource.local.entity.AccountEntity
-import com.marcokosan.financialapptest.data.model.Account
+import com.marcokosan.financialapptest.data.local.entity.AccountEntity
+import com.marcokosan.financialapptest.model.Account
 
 fun AccountEntity.toDomain() = Account(
     id = id,

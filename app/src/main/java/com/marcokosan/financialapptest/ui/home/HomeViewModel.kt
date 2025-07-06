@@ -4,18 +4,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.map
 import com.marcokosan.financialapptest.R
-import com.marcokosan.financialapptest.data.model.Transaction
 import com.marcokosan.financialapptest.data.repository.AccountInfoRepository
+import com.marcokosan.financialapptest.ui.home.mapper.toHomeTransactionItemUiModel
+import com.marcokosan.financialapptest.ui.home.model.HomeTransactionItemUiModel
 import com.marcokosan.financialapptest.ui.shared.ScreenEvent
-import com.marcokosan.financialapptest.util.CurrencyUtils
+import com.marcokosan.financialapptest.util.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,7 +25,7 @@ sealed class HomeUiState {
     object Loading : HomeUiState()
     data class Error(val message: String? = null) : HomeUiState()
     data class Success(
-        val isLoading: Boolean = false,
+        val isRefreshing: Boolean = false,
         val userName: String? = null,
         val balance: String? = null,
     ) : HomeUiState()
@@ -40,8 +42,11 @@ class HomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState
 
-    val transactions: Flow<PagingData<Transaction>> =
+    val transactions: Flow<PagingData<HomeTransactionItemUiModel>> =
         accountInfoRepository.getPagedTransactions(accountId)
+            .map { pagingData ->
+                pagingData.map { it.toHomeTransactionItemUiModel() }
+            }
             .cachedIn(viewModelScope)
 
 
@@ -49,15 +54,13 @@ class HomeViewModel @Inject constructor(
     val event = _event.receiveAsFlow()
 
     init {
-        refreshBalance()
+        refreshData()
     }
 
-    fun refreshBalance() {
+    fun refreshData() {
         _uiState.value.let { state ->
             if (state is HomeUiState.Success) {
-                _uiState.update {
-                    state.copy(isLoading = true)
-                }
+                _uiState.value = state.copy(isRefreshing = true)
             } else {
                 _uiState.value = HomeUiState.Loading
             }
@@ -68,7 +71,7 @@ class HomeViewModel @Inject constructor(
                 onSuccess = { data ->
                     _uiState.value = HomeUiState.Success(
                         userName = data.holderName,
-                        balance = CurrencyUtils.FORMATTER.format(data.balance),
+                        balance = Utils.CURRENCY_FORMATTER.format(data.balance),
                     )
                 },
                 onFailure = {
