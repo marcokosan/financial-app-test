@@ -1,6 +1,8 @@
 package com.marcokosan.financialapptest.ui.home
 
 import android.app.Activity
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +17,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowCircleDown
 import androidx.compose.material.icons.filled.ArrowCircleUp
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -49,6 +53,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.marcokosan.financialapptest.R
 import com.marcokosan.financialapptest.data.model.Transaction
+import com.marcokosan.financialapptest.ui.ThemeViewModel
 import com.marcokosan.financialapptest.ui.shared.ScreenEvent
 import com.marcokosan.financialapptest.ui.theme.DesignSystemTheme
 import com.marcokosan.financialapptest.ui.theme.extendedColorScheme
@@ -63,6 +68,9 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onTransactionClick: (Long) -> Unit,
 ) {
+    val activity = LocalActivity.current as ComponentActivity
+    val themeViewModel: ThemeViewModel = hiltViewModel(activity)
+
     val uiState by viewModel.uiState.collectAsState()
     val transactions = viewModel.transactions.collectAsLazyPagingItems()
 
@@ -93,12 +101,27 @@ fun HomeScreen(
             LargeTopAppBar(
                 colors = TopAppBarDefaults.largeTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
+                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
                 ),
                 title = {
                     Balance(
                         modifier = Modifier.padding(end = 16.dp),
                         value = (uiState as? HomeUiState.Success)?.balance ?: "-",
                     )
+                },
+                actions = {
+                    val isDarkTheme = themeViewModel.isDarkTheme.value
+
+                    IconButton(onClick = themeViewModel::toggleTheme) {
+                        Icon(
+                            imageVector = if (isDarkTheme) {
+                                Icons.Default.LightMode
+                            } else {
+                                Icons.Default.DarkMode
+                            },
+                            contentDescription = "Alternar modo do tema",
+                        )
+                    }
                 },
             )
         }
