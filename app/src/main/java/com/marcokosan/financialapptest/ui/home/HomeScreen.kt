@@ -25,13 +25,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -52,16 +54,11 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.marcokosan.financialapptest.R
-import com.marcokosan.financialapptest.data.model.Transaction
 import com.marcokosan.financialapptest.ui.ThemeViewModel
+import com.marcokosan.financialapptest.ui.home.model.HomeTransactionItemUiModel
 import com.marcokosan.financialapptest.ui.shared.ScreenEvent
 import com.marcokosan.financialapptest.ui.theme.DesignSystemTheme
 import com.marcokosan.financialapptest.ui.theme.extendedColorScheme
-import com.marcokosan.financialapptest.util.CurrencyUtils
-import java.text.SimpleDateFormat
-import java.util.Locale
-
-private val TRANSACTION_DATE_FORMATTER = SimpleDateFormat("dd MMM", Locale.forLanguageTag("pt-BR"))
 
 @Composable
 fun HomeScreen(
@@ -100,8 +97,8 @@ fun HomeScreen(
         topBar = {
             LargeTopAppBar(
                 colors = TopAppBarDefaults.largeTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+                    containerColor = colorScheme.primary,
+                    actionIconContentColor = colorScheme.onPrimary
                 ),
                 title = {
                     Balance(
@@ -132,6 +129,8 @@ fun HomeScreen(
                 Content(
                     contentPadding = innerPadding,
                     transactions = transactions,
+                    isRefreshing = state.isRefreshing,
+                    onRefresh = viewModel::refreshData,
                     onTransactionClick = onTransactionClick,
                 )
             }
@@ -154,7 +153,7 @@ fun HomeScreen(
                         .padding(innerPadding),
                     message = state.message,
                     onTryAgain = {
-                        viewModel.refreshBalance()
+                        viewModel.refreshData()
                     }
                 )
             }
@@ -170,14 +169,14 @@ private fun Balance(value: String, modifier: Modifier = Modifier) {
     ) {
         Text(
             text = "Saldo",
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onPrimary,
+            style = typography.headlineSmall,
+            color = colorScheme.onPrimary,
             fontWeight = FontWeight.Bold,
         )
         Text(
             text = value,
-            style = MaterialTheme.typography.displaySmall,
-            color = MaterialTheme.colorScheme.onPrimary,
+            style = typography.displaySmall,
+            color = colorScheme.onPrimary,
             fontWeight = FontWeight.Bold,
         )
     }
@@ -187,44 +186,57 @@ private fun Balance(value: String, modifier: Modifier = Modifier) {
 private fun Content(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues,
-    transactions: LazyPagingItems<Transaction>,
+    transactions: LazyPagingItems<HomeTransactionItemUiModel>,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
     onTransactionClick: (Long) -> Unit,
 ) {
-    LazyColumn(
-        modifier = modifier,
-        contentPadding = contentPadding,
-        horizontalAlignment = Alignment.CenterHorizontally,
+    PullToRefreshBox(
+        modifier = modifier.padding(top = contentPadding.calculateTopPadding()),
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
     ) {
-        items(transactions.itemCount) { index ->
-            transactions[index]?.let { transaction ->
-                TransactionItem(
-                    item = transaction,
-                    modifier = Modifier.clickable {
-                        onTransactionClick(transaction.id)
-                    }
-                )
-            }
-        }
-
-
-        when (transactions.loadState.append) {
-            is LoadState.Error -> item {
-                IconButton(onClick = transactions::retry) {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = stringResource(R.string.refresh)
+        LazyColumn(
+            contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            items(transactions.itemCount) { index ->
+                transactions[index]?.let { transaction ->
+                    TransactionItem(
+                        item = transaction,
+                        modifier = Modifier.clickable {
+                            onTransactionClick(transaction.id)
+                        }
                     )
                 }
             }
 
-            LoadState.Loading -> item { CircularProgressIndicator() }
-            is LoadState.NotLoading -> {}
+
+            when (transactions.loadState.append) {
+                is LoadState.Error -> item {
+                    IconButton(onClick = transactions::retry) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = stringResource(R.string.refresh)
+                        )
+                    }
+                }
+
+                LoadState.Loading -> item { CircularProgressIndicator() }
+                is LoadState.NotLoading -> {}
+            }
         }
     }
 }
 
 @Composable
-private fun TransactionItem(item: Transaction, modifier: Modifier = Modifier) {
+private fun TransactionItem(item: HomeTransactionItemUiModel, modifier: Modifier = Modifier) {
+    val transactionTypeColor = if (item.isIncome) {
+        extendedColorScheme.success
+    } else {
+        colorScheme.onSurface
+    }
+
     ListItem(
         modifier = modifier,
         leadingContent = {
@@ -234,28 +246,18 @@ private fun TransactionItem(item: Transaction, modifier: Modifier = Modifier) {
                 } else {
                     Icons.Default.ArrowCircleUp
                 },
-                tint = if (item.isIncome) {
-                    extendedColorScheme.success
-                } else {
-                    MaterialTheme.colorScheme.onSurface
-                },
+                tint = transactionTypeColor,
                 contentDescription = null,
             )
         },
         headlineContent = { Text(item.description) },
         supportingContent = {
             Text(
-                CurrencyUtils.FORMATTER.format(item.value),
-                color = if (item.isIncome) {
-                    extendedColorScheme.success
-                } else {
-                    MaterialTheme.colorScheme.onSurface
-                },
+                item.value,
+                color = transactionTypeColor,
             )
         },
-        trailingContent = {
-            Text(TRANSACTION_DATE_FORMATTER.format(item.timestamp))
-        }
+        trailingContent = { Text(item.date) }
     )
 }
 
