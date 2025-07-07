@@ -48,7 +48,7 @@ class HomeViewModel @Inject constructor(
     val uiState: StateFlow<HomeUiState> = _uiState
 
     val transactions: Flow<PagingData<HomeTransactionItemUiModel>> =
-        getTransactions(accountId)
+        getTransactions(accountId = accountId)
             .map { pagingData ->
                 pagingData.map { it.toHomeTransactionItemUiModel() }
             }

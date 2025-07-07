@@ -76,6 +76,8 @@ dependencies {
 
     // Unit test.
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockk)
     testImplementation(libs.hilt.android.testing)
     kspTest(libs.hilt.compiler)
 
