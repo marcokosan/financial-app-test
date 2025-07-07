@@ -9,4 +9,5 @@
     <string name="error_message">Ocorreu um erro</string>
 
     <string name="home_switch_theme_mode_description">Alternar modo do tema</string>
+    <string name="home_statement_empty">Nenhuma transações realizada.</string>
 </resources>

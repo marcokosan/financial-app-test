@@ -46,6 +46,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
@@ -202,6 +203,7 @@ private fun Content(
         onRefresh = onRefresh,
     ) {
         LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -228,8 +230,19 @@ private fun Content(
                 }
 
                 LoadState.Loading -> item { CircularProgressIndicator() }
-                is LoadState.NotLoading -> {}
+                is LoadState.NotLoading -> {
+                    if (transactions.itemCount == 0) {
+                        item {
+                            Text(
+                                stringResource(R.string.home_statement_empty),
+                                modifier = Modifier.padding(all = 16.dp),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                }
             }
+
         }
     }
 }
