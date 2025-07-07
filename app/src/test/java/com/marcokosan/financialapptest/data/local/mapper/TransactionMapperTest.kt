@@ -9,8 +9,8 @@ import java.sql.Timestamp
 
 class TransactionMapperTest {
 
-    val value = BigDecimal(1)
-    val timestamp = Timestamp(System.currentTimeMillis())
+    private val value = BigDecimal(1)
+    private val timestamp = Timestamp(0)
 
     @Test
     fun domainMapper() {

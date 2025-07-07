@@ -42,7 +42,7 @@ class TransactionRepositoryTest {
             accountId = "accountId",
             value = BigDecimal(id),
             description = "Desc $id",
-            timestamp = Timestamp(System.currentTimeMillis())
+            timestamp = Timestamp(0)
         )
     }
 }
