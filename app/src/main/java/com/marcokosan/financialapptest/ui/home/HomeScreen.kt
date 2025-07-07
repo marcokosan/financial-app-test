@@ -58,8 +58,8 @@ import com.marcokosan.financialapptest.R
 import com.marcokosan.financialapptest.ui.ThemeViewModel
 import com.marcokosan.financialapptest.ui.home.model.HomeTransactionItemUiModel
 import com.marcokosan.financialapptest.ui.shared.ScreenEvent
-import com.marcokosan.financialapptest.ui.theme.DesignSystemTheme
-import com.marcokosan.financialapptest.ui.theme.extendedColorScheme
+import com.marcokosan.financialapptest.designsystem.theme.DesignSystemTheme
+import com.marcokosan.financialapptest.designsystem.theme.extendedColorScheme
 
 @Composable
 fun HomeScreen(

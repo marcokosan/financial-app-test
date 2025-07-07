@@ -1,4 +1,4 @@
-package com.marcokosan.financialapptest.ui.theme
+package com.marcokosan.financialapptest.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 
@@ -37,7 +37,7 @@ val surfaceContainerLowLight = Color(0xFFF1F3FD)
 val surfaceContainerLight = Color(0xFFECEDF7)
 val surfaceContainerHighLight = Color(0xFFE6E8F2)
 val surfaceContainerHighestLight = Color(0xFFE0E2EC)
-val successLight = Color(0XFF008000)
+val successLight = Color(0xFF008000)
 val onSuccessLight = Color(0XFFCCFFBA)
 val successContainerLight = Color(0XFF6EC15C)
 val onSuccessContainerLight = Color(0XFF014D00)
