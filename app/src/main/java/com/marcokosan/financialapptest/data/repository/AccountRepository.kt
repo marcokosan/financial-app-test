@@ -14,7 +14,7 @@ class AccountRepositoryImpl(
 ) : AccountRepository {
 
     override suspend fun getAccount(accountId: String): Account? {
-        // Simulate network delay.
+        // Simulate IO delay.
         delay(1000)
 
         return accountDao.getById(accountId)?.toDomain()

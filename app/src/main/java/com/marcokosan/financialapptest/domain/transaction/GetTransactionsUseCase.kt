@@ -1,18 +1,18 @@
 package com.marcokosan.financialapptest.domain.transaction
 
 import androidx.paging.PagingData
-import com.marcokosan.financialapptest.data.repository.TransactionsRepository
+import com.marcokosan.financialapptest.data.repository.TransactionRepository
 import com.marcokosan.financialapptest.model.Transaction
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetTransactionsUseCase @Inject constructor(
-    private val transactionsRepository: TransactionsRepository,
+    private val transactionRepository: TransactionRepository,
 ) {
     operator fun invoke(
         accountId: String,
         pageSize: Int = 20,
         enablePlaceholders: Boolean = false,
     ): Flow<PagingData<Transaction>> =
-        transactionsRepository.getPagedTransactions(accountId, pageSize, enablePlaceholders)
+        transactionRepository.getPagedTransactions(accountId, pageSize, enablePlaceholders)
 }

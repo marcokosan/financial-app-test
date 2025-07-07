@@ -10,7 +10,7 @@ import com.marcokosan.financialapptest.model.Transaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-interface TransactionsRepository {
+interface TransactionRepository {
     fun getPagedTransactions(
         accountId: String,
         pageSize: Int,
@@ -18,9 +18,9 @@ interface TransactionsRepository {
     ): Flow<PagingData<Transaction>>
 }
 
-class TransactionsRepositoryImpl(
+class TransactionRepositoryImpl(
     private val transactionDao: TransactionDao,
-) : TransactionsRepository {
+) : TransactionRepository {
 
     override fun getPagedTransactions(
         accountId: String,

@@ -1,17 +1,16 @@
 package com.marcokosan.financialapptest.domain.transaction
 
 import androidx.paging.PagingData
-import com.marcokosan.financialapptest.data.repository.TransactionsRepository
+import com.marcokosan.financialapptest.data.repository.TransactionRepository
 import com.marcokosan.financialapptest.model.Transaction
 import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.junit4.MockKRule
+import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -20,15 +19,9 @@ class GetTransactionsUseCaseTest {
     @get:Rule
     val mockkRule = MockKRule(this)
 
-    @MockK
-    private lateinit var mockTransactionsRepository: TransactionsRepository
+    private val transactionsRepositoryMock: TransactionRepository = mockk()
 
-    private lateinit var getTransactionsUseCase: GetTransactionsUseCase
-
-    @Before
-    fun setUp() {
-        getTransactionsUseCase = GetTransactionsUseCase(mockTransactionsRepository)
-    }
+    private val getTransactionsUseCase = GetTransactionsUseCase(transactionsRepositoryMock)
 
     @Test
     fun returnPagingDataFlow() = runTest {
@@ -39,7 +32,7 @@ class GetTransactionsUseCaseTest {
         val expectedFlow = flowOf(expectedPagingData)
 
         every {
-            mockTransactionsRepository.getPagedTransactions(
+            transactionsRepositoryMock.getPagedTransactions(
                 accountId = accountId,
                 pageSize = pageSize,
                 enablePlaceholders = enablePlaceholders
@@ -55,7 +48,7 @@ class GetTransactionsUseCaseTest {
 
         verify {
             @Suppress("UnusedFlow")
-            mockTransactionsRepository.getPagedTransactions(
+            transactionsRepositoryMock.getPagedTransactions(
                 accountId = accountId,
                 pageSize = pageSize,
                 enablePlaceholders = enablePlaceholders
