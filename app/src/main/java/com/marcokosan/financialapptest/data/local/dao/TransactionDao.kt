@@ -13,7 +13,7 @@ interface TransactionDao {
     fun getPagingSource(accountId: String): PagingSource<Int, TransactionEntity>
 
     @Query("SELECT * FROM transactions WHERE id = :id")
-    fun getById(id: Long): TransactionEntity?
+    suspend fun getById(id: Long): TransactionEntity?
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(vararg transaction: TransactionEntity)

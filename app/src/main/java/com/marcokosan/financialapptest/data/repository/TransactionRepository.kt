@@ -45,7 +45,7 @@ class TransactionRepositoryImpl(
 
     override suspend fun getTransaction(id: Long): Transaction? {
         // Simulate IO delay.
-        delay(200)
+        delay(1000)
 
         return dao.getById(id)?.toDomain()
     }

@@ -5,7 +5,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.marcokosan.financialapptest.ui.home.HomeScreen
+import com.marcokosan.financialapptest.ui.transactiondetail.TransactionDetailScreen
 
 @Composable
 fun AppNavHost(
@@ -14,25 +16,23 @@ fun AppNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = AppRoute.HOME,
+        startDestination = AppRoute.Home,
         modifier = modifier
     ) {
-        composable(AppRoute.HOME) {
+        composable<AppRoute.Home> {
             HomeScreen(
                 onTransactionClick = { transactionId ->
-//                    navController.navigate("${AppRoute.TRANSACTION_DETAIL}/$transactionId")
+                    val route = AppRoute.TransactionDetail(transactionId = transactionId)
+                    navController.navigate(route)
                 }
             )
         }
-//        composable(
-//            route = "${AppRoute.TRANSACTION_DETAIL_ROUTE}/{${AppRoute.Key.TRANSACTION_ID}}",
-//            arguments = listOf(navArgument(AppRoute.Key.TRANSACTION_ID) {
-//                type = NavType.StringType
-//            })
-//        ) { backStackEntry ->
-//            val transactionId =
-//                backStackEntry.arguments?.getString(AppRoute.Key.TRANSACTION_ID)
-//            TransactionDetailScreen(transactionId = transactionId)
-//        }
+        composable<AppRoute.TransactionDetail> { backStackEntry ->
+            val transactionDetail: AppRoute.TransactionDetail = backStackEntry.toRoute()
+            TransactionDetailScreen(
+                transactionId = transactionDetail.transactionId,
+                onBackPressed = navController::popBackStack
+            )
+        }
     }
 }
