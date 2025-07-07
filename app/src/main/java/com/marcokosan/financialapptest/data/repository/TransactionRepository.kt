@@ -7,6 +7,7 @@ import androidx.paging.map
 import com.marcokosan.financialapptest.data.local.dao.TransactionDao
 import com.marcokosan.financialapptest.data.local.mapper.toDomain
 import com.marcokosan.financialapptest.model.Transaction
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -16,10 +17,14 @@ interface TransactionRepository {
         pageSize: Int,
         enablePlaceholders: Boolean,
     ): Flow<PagingData<Transaction>>
+
+    suspend fun getTransaction(
+        id: Long,
+    ): Transaction?
 }
 
 class TransactionRepositoryImpl(
-    private val transactionDao: TransactionDao,
+    private val dao: TransactionDao,
 ) : TransactionRepository {
 
     override fun getPagedTransactions(
@@ -32,9 +37,16 @@ class TransactionRepositoryImpl(
                 pageSize = pageSize,
                 enablePlaceholders = enablePlaceholders
             ),
-            pagingSourceFactory = { transactionDao.getPagingSource(accountId) }
+            pagingSourceFactory = { dao.getPagingSource(accountId) }
         ).flow.map { pagingData ->
             pagingData.map { it.toDomain() }
         }
+    }
+
+    override suspend fun getTransaction(id: Long): Transaction? {
+        // Simulate IO delay.
+        delay(200)
+
+        return dao.getById(id)?.toDomain()
     }
 }

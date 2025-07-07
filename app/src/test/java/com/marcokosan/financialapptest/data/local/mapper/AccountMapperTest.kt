@@ -8,39 +8,25 @@ import java.math.BigDecimal
 
 class AccountMapperTest {
 
+    private val entity = AccountEntity(
+        id = "id",
+        holderName = "holderName",
+        balance = BigDecimal(1)
+    )
+
+    private val model = Account(
+        id = "id",
+        holderName = "holderName",
+        balance = BigDecimal(1)
+    )
+
     @Test
-    fun domainMapper() {
-        val entity = AccountEntity(
-            id = "id",
-            holderName = "holderName",
-            balance = BigDecimal(1)
-        )
-        val expected = Account(
-            id = "id",
-            holderName = "holderName",
-            balance = BigDecimal(1)
-        )
-
-        val result = entity.toDomain()
-
-        assertEquals(expected, result)
+    fun entityToDomainModel() {
+        assertEquals(model, entity.toDomain())
     }
 
     @Test
-    fun entityMapper() {
-        val model = Account(
-            id = "id",
-            holderName = "holderName",
-            balance = BigDecimal(1)
-        )
-        val expected = AccountEntity(
-            id = "id",
-            holderName = "holderName",
-            balance = BigDecimal(1)
-        )
-
-        val result = model.toEntity()
-
-        assertEquals(expected, result)
+    fun domainModelToEntity() {
+        assertEquals(entity, model.toEntity())
     }
 }

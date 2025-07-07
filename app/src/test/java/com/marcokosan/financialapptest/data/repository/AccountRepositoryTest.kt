@@ -20,26 +20,26 @@ class AccountRepositoryTest {
 
     @Test
     fun returnAccount() = runTest {
-        val accountId = "accountId"
-        val accountEntity = AccountEntity(
-            id = "id",
+        val id = "id"
+        val entity = AccountEntity(
+            id = id,
             holderName = "holderName",
-            balance = BigDecimal("1.0"),
+            balance = BigDecimal(1),
         )
-        val expectedAccount = accountEntity.toDomain()
-        coEvery { dao.getById(accountId) } returns accountEntity
+        val expectedModel = entity.toDomain()
+        coEvery { dao.getById(id) } returns entity
 
-        val result = repository.getAccount(accountId)
+        val result = repository.getAccount(id)
 
-        assertEquals(expectedAccount, result)
+        assertEquals(expectedModel, result)
     }
 
     @Test
-    fun whenNoAccount_returnsNull() = runTest {
-        val accountId = "accountId"
-        coEvery { dao.getById(accountId) } returns null
+    fun whenAccountNotFound_returnsNull() = runTest {
+        val id = "id"
+        coEvery { dao.getById(id) } returns null
 
-        val result = repository.getAccount(accountId)
+        val result = repository.getAccount(id)
 
         assertNull(result)
     }

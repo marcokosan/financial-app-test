@@ -5,11 +5,14 @@ import androidx.paging.testing.asSnapshot
 import com.marcokosan.financialapptest.data.local.dao.TransactionDao
 import com.marcokosan.financialapptest.data.local.entity.TransactionEntity
 import com.marcokosan.financialapptest.data.local.mapper.toDomain
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert
+import org.junit.Assert.assertNull
 import org.junit.Test
 import java.math.BigDecimal
 import java.sql.Timestamp
@@ -25,9 +28,11 @@ class TransactionRepositoryTest {
         val accountId = "accountId"
         val pageSize = 10
         val enablePlaceholders = true
-        val transactionsList = List(10) { index -> fakeEntity(id = index.toLong()) }
-        val expectedTransactionsList = transactionsList.map { it.toDomain() }
-        every { dao.getPagingSource(accountId) } returns transactionsList
+        val transactions = List(10) { index ->
+            createTransactionEntity(id = index.toLong())
+        }
+        val expectedTransactionsList = transactions.map { it.toDomain() }
+        every { dao.getPagingSource(accountId) } returns transactions
             .asPagingSourceFactory().invoke()
 
         val result = repository.getPagedTransactions(accountId, pageSize, enablePlaceholders)
@@ -36,13 +41,35 @@ class TransactionRepositoryTest {
         assertEquals(expectedTransactionsList, snapshot)
     }
 
-    private fun fakeEntity(id: Long): TransactionEntity {
-        return TransactionEntity(
-            id = id,
-            accountId = "accountId",
-            value = BigDecimal(id),
-            description = "Desc $id",
-            timestamp = Timestamp(0)
-        )
+    @Test
+    fun returnTransaction() = runTest {
+        val id = 1L
+        val entity = createTransactionEntity()
+        val expectedModel = entity.toDomain()
+        coEvery { dao.getById(id) } returns entity
+
+        val result = repository.getTransaction(id)
+
+        Assert.assertEquals(expectedModel, result)
     }
+
+    @Test
+    fun whenTransactiontNotFound_returnsNull() = runTest {
+        val id = 1L
+        coEvery { dao.getById(id) } returns null
+
+        val result = repository.getTransaction(id)
+
+        assertNull(result)
+    }
+
+    private fun createTransactionEntity(
+        id: Long = 1,
+    ) = TransactionEntity(
+        id = id,
+        accountId = "accountId",
+        value = BigDecimal(1),
+        description = "description $id",
+        timestamp = Timestamp(1)
+    )
 }

@@ -14,14 +14,14 @@ import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 
-class GetTransactionsUseCaseTest {
+class GetPagedTransactionsUseCaseTest {
 
     @get:Rule
     val mockkRule = MockKRule(this)
 
-    private val transactionsRepositoryMock: TransactionRepository = mockk()
+    private val transactionsRepository: TransactionRepository = mockk()
 
-    private val getTransactionsUseCase = GetTransactionsUseCase(transactionsRepositoryMock)
+    private val getPagedTransactionsUseCase = GetPagedTransactionsUseCase(transactionsRepository)
 
     @Test
     fun returnPagingDataFlow() = runTest {
@@ -32,14 +32,14 @@ class GetTransactionsUseCaseTest {
         val expectedFlow = flowOf(expectedPagingData)
 
         every {
-            transactionsRepositoryMock.getPagedTransactions(
+            transactionsRepository.getPagedTransactions(
                 accountId = accountId,
                 pageSize = pageSize,
                 enablePlaceholders = enablePlaceholders
             )
         } returns expectedFlow
 
-        val resultFlow = getTransactionsUseCase(
+        val resultFlow = getPagedTransactionsUseCase(
             accountId = accountId,
             pageSize = pageSize,
             enablePlaceholders = enablePlaceholders
@@ -48,7 +48,7 @@ class GetTransactionsUseCaseTest {
 
         verify {
             @Suppress("UnusedFlow")
-            transactionsRepositoryMock.getPagedTransactions(
+            transactionsRepository.getPagedTransactions(
                 accountId = accountId,
                 pageSize = pageSize,
                 enablePlaceholders = enablePlaceholders

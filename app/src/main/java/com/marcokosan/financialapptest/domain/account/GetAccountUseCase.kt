@@ -5,10 +5,10 @@ import com.marcokosan.financialapptest.model.Account
 import javax.inject.Inject
 
 class GetAccountUseCase @Inject constructor(
-    private val accountInfoRepository: AccountRepository,
+    private val accountRepository: AccountRepository,
 ) {
     suspend operator fun invoke(id: String): Result<Account> = runCatching {
-        accountInfoRepository.getAccount(id)
-            ?: return Result.failure(Exception("Account not found for id $id"))
+        accountRepository.getAccount(id)
+            ?: return Result.failure(Exception("Account with ID $id not found"))
     }
 }

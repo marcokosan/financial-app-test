@@ -9,7 +9,6 @@ fun AccountEntity.toDomain() = Account(
     balance = balance
 )
 
-@Suppress("unused")
 fun Account.toEntity() = AccountEntity(
     id = id,
     holderName = holderName,

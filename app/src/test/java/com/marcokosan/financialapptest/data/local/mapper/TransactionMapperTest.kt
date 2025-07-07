@@ -10,49 +10,31 @@ import java.sql.Timestamp
 class TransactionMapperTest {
 
     private val value = BigDecimal(1)
-    private val timestamp = Timestamp(0)
+    private val timestamp = Timestamp(1)
+
+    private val entity = TransactionEntity(
+        id = 1,
+        accountId = "accountId",
+        value = value,
+        description = "description",
+        timestamp = timestamp,
+    )
+
+    private val model = Transaction(
+        id = 1,
+        accountId = "accountId",
+        value = value,
+        description = "description",
+        timestamp = timestamp,
+    )
 
     @Test
-    fun domainMapper() {
-        val entity = TransactionEntity(
-            id = 1,
-            accountId = "accountId",
-            value = value,
-            description = "description",
-            timestamp = timestamp,
-        )
-        val expected = Transaction(
-            id = 1,
-            accountId = "accountId",
-            value = value,
-            description = "description",
-            timestamp = timestamp,
-        )
-
-        val result = entity.toDomain()
-
-        assertEquals(expected, result)
+    fun entityToDomainModel() {
+        assertEquals(model, entity.toDomain())
     }
 
     @Test
-    fun entityMapper() {
-        val model = Transaction(
-            id = 1,
-            accountId = "accountId",
-            value = value,
-            description = "description",
-            timestamp = timestamp,
-        )
-        val expected = TransactionEntity(
-            id = 1,
-            accountId = "accountId",
-            value = value,
-            description = "description",
-            timestamp = timestamp,
-        )
-
-        val result = model.toEntity()
-
-        assertEquals(expected, result)
+    fun domainModelToEntity() {
+        assertEquals(entity, model.toEntity())
     }
 }

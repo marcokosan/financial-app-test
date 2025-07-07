@@ -10,13 +10,13 @@ interface AccountRepository {
 }
 
 class AccountRepositoryImpl(
-    private val accountDao: AccountDao,
+    private val dao: AccountDao,
 ) : AccountRepository {
 
     override suspend fun getAccount(accountId: String): Account? {
         // Simulate IO delay.
         delay(1000)
 
-        return accountDao.getById(accountId)?.toDomain()
+        return dao.getById(accountId)?.toDomain()
     }
 }

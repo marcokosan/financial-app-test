@@ -7,7 +7,7 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import com.marcokosan.financialapptest.R
 import com.marcokosan.financialapptest.domain.account.GetAccountUseCase
-import com.marcokosan.financialapptest.domain.transaction.GetTransactionsUseCase
+import com.marcokosan.financialapptest.domain.transaction.GetPagedTransactionsUseCase
 import com.marcokosan.financialapptest.ui.home.mapper.toHomeTransactionItemUiModel
 import com.marcokosan.financialapptest.ui.home.model.HomeTransactionItemUiModel
 import com.marcokosan.financialapptest.ui.shared.ScreenEvent
@@ -35,7 +35,7 @@ sealed class HomeUiState {
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val geAccount: GetAccountUseCase,
-    getTransactions: GetTransactionsUseCase,
+    getPagedTransactions: GetPagedTransactionsUseCase,
 ) : ViewModel() {
 
     // TODO: Get accountId through login flow.
@@ -48,7 +48,7 @@ class HomeViewModel @Inject constructor(
     val uiState: StateFlow<HomeUiState> = _uiState
 
     val transactions: Flow<PagingData<HomeTransactionItemUiModel>> =
-        getTransactions(accountId = accountId)
+        getPagedTransactions(accountId = accountId)
             .map { pagingData ->
                 pagingData.map { it.toHomeTransactionItemUiModel() }
             }

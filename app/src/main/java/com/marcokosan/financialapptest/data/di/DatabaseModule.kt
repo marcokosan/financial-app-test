@@ -5,7 +5,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.marcokosan.financialapptest.data.local.AppDatabase
-import com.marcokosan.financialapptest.data.local.BootstrapData
+import com.marcokosan.financialapptest.data.local.FakeData
 import com.marcokosan.financialapptest.data.local.dao.AccountDao
 import com.marcokosan.financialapptest.data.local.dao.TransactionDao
 import dagger.Module
@@ -23,20 +23,18 @@ import javax.inject.Singleton
 class DatabaseModule {
 
     @Provides
-    fun provideAccountDao(db: AppDatabase): AccountDao {
-        return db.accountDao()
-    }
+    fun provideAccountDao(db: AppDatabase): AccountDao =
+        db.accountDao()
 
     @Provides
-    fun provideTransactionDao(db: AppDatabase): TransactionDao {
-        return db.transactionDao()
-    }
+    fun provideTransactionDao(db: AppDatabase): TransactionDao =
+        db.transactionDao()
 
     @Provides
     @Singleton
     fun provideAppDatabase(
         @ApplicationContext appContext: Context,
-        bootstrap: BootstrapData,
+        fakeData: FakeData,
     ): AppDatabase {
         return Room.databaseBuilder(
             appContext,
@@ -46,7 +44,7 @@ class DatabaseModule {
             .addCallback(object : RoomDatabase.Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     CoroutineScope(Dispatchers.IO).launch {
-                        bootstrap.load()
+                        fakeData.generate()
                     }
                 }
             })
