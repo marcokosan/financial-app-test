@@ -6,7 +6,7 @@ import com.marcokosan.financialapptest.model.Transaction
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetTransactionsUseCase @Inject constructor(
+class GetPagedTransactionsUseCase @Inject constructor(
     private val transactionRepository: TransactionRepository,
 ) {
     operator fun invoke(

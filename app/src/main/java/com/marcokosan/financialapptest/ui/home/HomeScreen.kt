@@ -4,14 +4,11 @@ import android.app.Activity
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -27,7 +24,6 @@ import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -55,11 +51,17 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.marcokosan.financialapptest.R
+import com.marcokosan.financialapptest.designsystem.component.DsErrorMessage
+import com.marcokosan.financialapptest.designsystem.theme.DesignSystemTheme
+import com.marcokosan.financialapptest.designsystem.theme.extendedColorScheme
+import com.marcokosan.financialapptest.model.Transaction
 import com.marcokosan.financialapptest.ui.ThemeViewModel
-import com.marcokosan.financialapptest.ui.home.model.HomeTransactionItemUiModel
 import com.marcokosan.financialapptest.ui.shared.ScreenEvent
-import com.marcokosan.financialapptest.ui.theme.DesignSystemTheme
-import com.marcokosan.financialapptest.ui.theme.extendedColorScheme
+import com.marcokosan.financialapptest.util.Utils
+import java.text.SimpleDateFormat
+import java.util.Locale
+
+private const val DATE_PATTERN = "dd MMM"
 
 @Composable
 fun HomeScreen(
@@ -152,7 +154,7 @@ fun HomeScreen(
             }
 
             is HomeUiState.Error -> {
-                ErrorMessage(
+                DsErrorMessage(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding),
@@ -192,7 +194,7 @@ private fun Balance(value: String, modifier: Modifier = Modifier) {
 private fun Content(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues,
-    transactions: LazyPagingItems<HomeTransactionItemUiModel>,
+    transactions: LazyPagingItems<Transaction>,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     onTransactionClick: (Long) -> Unit,
@@ -242,18 +244,19 @@ private fun Content(
                     }
                 }
             }
-
         }
     }
 }
 
 @Composable
-private fun TransactionItem(item: HomeTransactionItemUiModel, modifier: Modifier = Modifier) {
+private fun TransactionItem(item: Transaction, modifier: Modifier = Modifier) {
     val transactionTypeColor = if (item.isIncome) {
         extendedColorScheme.success
     } else {
         colorScheme.onSurface
     }
+
+    val dateFormat = SimpleDateFormat(DATE_PATTERN, Locale.getDefault())
 
     ListItem(
         modifier = modifier,
@@ -271,38 +274,17 @@ private fun TransactionItem(item: HomeTransactionItemUiModel, modifier: Modifier
         headlineContent = { Text(item.description) },
         supportingContent = {
             Text(
-                item.value,
+                Utils.CURRENCY_FORMATTER.format(item.value),
                 color = transactionTypeColor,
             )
         },
-        trailingContent = { Text(item.date) }
+        trailingContent = { Text(dateFormat.format(item.timestamp)) }
     )
-}
-
-@Composable
-private fun ErrorMessage(
-    message: String?,
-    modifier: Modifier = Modifier,
-    onTryAgain: (() -> Unit)? = null,
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(message ?: stringResource(R.string.error_message))
-        onTryAgain?.let {
-            Spacer(modifier = Modifier.height(16.dp))
-            OutlinedButton(onClick = onTryAgain) {
-                Text(stringResource(R.string.try_again))
-            }
-        }
-    }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun HomeScreenPreview() {
+private fun ScreenPreview() {
     DesignSystemTheme {
         HomeScreen(onTransactionClick = {})
     }

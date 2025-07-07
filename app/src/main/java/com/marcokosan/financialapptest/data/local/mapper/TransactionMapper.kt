@@ -11,7 +11,6 @@ fun TransactionEntity.toDomain() = Transaction(
     timestamp = timestamp,
 )
 
-@Suppress("unused")
 fun Transaction.toEntity() = TransactionEntity(
     id = id,
     accountId = accountId,

@@ -1,4 +1,4 @@
-package com.marcokosan.financialapptest.ui.theme
+package com.marcokosan.financialapptest.designsystem.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

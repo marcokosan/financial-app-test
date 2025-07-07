@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.marcokosan.financialapptest.navigation.AppNavHost
-import com.marcokosan.financialapptest.ui.theme.DesignSystemTheme
+import com.marcokosan.financialapptest.designsystem.theme.DesignSystemTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

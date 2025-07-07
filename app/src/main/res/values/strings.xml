@@ -2,12 +2,18 @@
     <string name="app_name">Financial App Test</string>
 
     <string name="title_home">Home</string>
+    <string name="title_transaction_detail">Detalhe da transação</string>
 
     <string name="try_again">Tentar novamente</string>
     <string name="refresh">Recarregar</string>
     <string name="balance">Saldo</string>
     <string name="error_message">Ocorreu um erro</string>
 
+    <string name="back_button_description">Voltar</string>
+
     <string name="home_switch_theme_mode_description">Alternar modo do tema</string>
     <string name="home_statement_empty">Nenhuma transações realizada.</string>
+
+    <string name="transaction_detail_date_pattern">EEEE, dd \'de\' MMMM \'de\' yyyy, HH:mm</string>
+
 </resources>

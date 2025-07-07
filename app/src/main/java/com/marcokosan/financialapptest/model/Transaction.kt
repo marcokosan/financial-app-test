@@ -9,4 +9,6 @@ data class Transaction(
     val value: BigDecimal,
     val description: String,
     val timestamp: Timestamp,
-)
+) {
+    val isIncome = value.signum() >= 0
+}

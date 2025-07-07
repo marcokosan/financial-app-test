@@ -17,19 +17,19 @@ class GetAccountUseCaseTest {
     @get:Rule
     val mockkRule = MockKRule(this)
 
-    private val accountRepositoryMock: AccountRepository = mockk()
+    private val accountRepository: AccountRepository = mockk()
 
-    private val getAccountUseCase = GetAccountUseCase(accountRepositoryMock)
+    private val getAccountUseCase = GetAccountUseCase(accountRepository)
 
     @Test
-    fun returnSuccess() = runTest {
+    fun returnAccount() = runTest {
         val accountId = "accountId"
         val expectedAccount = Account(
             id = accountId,
             holderName = "holderName",
             balance = BigDecimal(1),
         )
-        coEvery { accountRepositoryMock.getAccount(accountId) } returns expectedAccount
+        coEvery { accountRepository.getAccount(accountId) } returns expectedAccount
 
         val result = getAccountUseCase(accountId)
 
@@ -37,9 +37,9 @@ class GetAccountUseCaseTest {
     }
 
     @Test
-    fun whenNoAccount_returnsFailure() = runTest {
+    fun whenAccountNotFound_returnsFailure() = runTest {
         val accountId = "accountId"
-        coEvery { accountRepositoryMock.getAccount(accountId) } returns null
+        coEvery { accountRepository.getAccount(accountId) } returns null
 
         val result = getAccountUseCase(accountId)
 
@@ -50,7 +50,7 @@ class GetAccountUseCaseTest {
     fun whenExceptionOccurs_returnFailure() = runTest {
         val accountId = "accountId"
         val expectedException = RuntimeException("Database error")
-        coEvery { accountRepositoryMock.getAccount(accountId) } throws expectedException
+        coEvery { accountRepository.getAccount(accountId) } throws expectedException
 
         val result = getAccountUseCase(accountId)
 

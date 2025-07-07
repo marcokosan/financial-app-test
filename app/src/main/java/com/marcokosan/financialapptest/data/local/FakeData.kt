@@ -14,10 +14,10 @@ import kotlin.random.Random
 
 private const val MOCK_ACCOUNT_ID = "42"
 
-class BootstrapData @Inject constructor(
+class FakeData @Inject constructor(
     private val db: Provider<AppDatabase>,
 ) {
-    suspend fun load() {
+    suspend fun generate() {
         db.get().accountDao().save(
             AccountEntity(
                 id = MOCK_ACCOUNT_ID,
@@ -25,8 +25,6 @@ class BootstrapData @Inject constructor(
                 balance = BigDecimal("1400050.42")
             ),
         )
-
-
         db.get().transactionDao()
             .insert(*generateTransactions().toTypedArray())
     }
