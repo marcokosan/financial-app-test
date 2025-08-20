@@ -123,7 +123,10 @@ private fun Content(
     modifier: Modifier = Modifier,
     data: TransactionDetailUiState.Success,
 ) {
-    val dateFormat = SimpleDateFormat("EEEE, dd 'de' MMMM 'de' yyyy, HH:mm", Locale.getDefault())
+    val dateFormat = SimpleDateFormat(
+        stringResource(R.string.transaction_detail_date_pattern),
+        Locale.getDefault(),
+    )
     val icon = if (data.isIncome) Icons.Default.ArrowCircleDown else Icons.Default.ArrowCircleUp
 
     val iconColor = if (data.isIncome) extendedColorScheme.success else colorScheme.onSurface
